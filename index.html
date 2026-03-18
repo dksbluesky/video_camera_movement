@@ -3,312 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Cinematography Master</title>
+    <title>AI Cinematography MASTER (VER 102)</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #38bdf8;
-            --text-main: #f1f5f9;
-            --text-sub: #94a3b8;
-            --fav-color: #f43f5e;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-        }
-
-        header {
-            padding: 25px 20px; text-align: center;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 3px; color: var(--accent-color); font-weight: 800; }
-
-        .app-container { padding: 20px; max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
-
-        /* 收藏夾入口 */
-        .fav-header-link {
-            background: rgba(255,255,255,0.03);
-            padding: 18px; border-radius: 15px; margin-bottom: 25px;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(244, 63, 94, 0.3); cursor: pointer;
-        }
-        .fav-header-link span { color: var(--fav-color); font-weight: bold; font-size: 0.95rem; }
-
-        .section-title { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; }
-
-        .category-card {
-            background: var(--card-bg);
-            padding: 20px; border-radius: 15px; margin-bottom: 12px;
-            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        .category-card h3 { margin: 0; font-size: 0.95rem; font-weight: 500; }
-        .category-card .arrow { color: var(--accent-color); font-size: 1.2rem; }
-
-        .item-row {
-            background: var(--card-bg);
-            padding: 18px 20px; border-radius: 12px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.02);
-        }
-        .item-row .word-name { font-weight: 600; font-size: 1rem; }
-        .item-row .fav-status { font-size: 0.85rem; color: var(--fav-color); display: flex; align-items: center; gap: 5px; font-weight: bold; }
-        .item-row .neutral-status { font-size: 1.2rem; color: var(--text-sub); }
-
-        /* 詳情 Modal */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 25, 0.98);
-            z-index: 1000; display: none; overflow-y: auto; padding: 40px 20px;
-        }
-
-        .modal-content {
-            background: var(--card-bg); border-radius: 25px;
-            padding: 35px 25px; max-width: 450px; margin: 40px auto;
-            position: relative;
-        }
-
-        .close-btn { position: absolute; top: 20px; left: 20px; font-size: 1.2rem; cursor: pointer; color: var(--text-sub); }
-        .fav-action-group { position: absolute; top: 18px; right: 25px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .fav-action-text { font-size: 0.8rem; color: var(--fav-color); font-weight: bold; display: none; }
-        .modal-heart { font-size: 1.5rem; color: var(--text-sub); transition: 0.3s; }
+        :root { --bg-color: #0f172a; --card-bg: #1e293b; --accent-color: #38bdf8; --text-main: #f1f5f9; --text-sub: #94a3b8; --fav-color: #f43f5e; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-main); font-family: sans-serif; }
+        header { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .app-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .fav-header-link { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; border: 1px solid var(--fav-color); cursor: pointer; }
+        .category-card { background: var(--card-bg); padding: 20px; border-radius: 15px; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; }
+        .item-row { background: var(--card-bg); padding: 18px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; cursor: pointer; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0f19; z-index: 1000; display: none; padding: 40px 20px; }
+        .modal-content { background: var(--card-bg); border-radius: 25px; padding: 35px 25px; max-width: 450px; margin: 0 auto; position: relative; }
+        .close-btn { position: absolute; top: 20px; left: 20px; cursor: pointer; }
+        .modal-heart { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; color: var(--text-sub); cursor: pointer; }
         .modal-heart.active { color: var(--fav-color); }
-        .fav-action-group.active .fav-action-text { display: block; }
-
-        .word-title { font-size: 2.2rem; margin: 30px 0 10px 0; color: var(--accent-color); font-weight: 800; text-align: center; }
-        .translation { font-size: 1.2rem; margin-bottom: 25px; color: var(--text-main); text-align: center; font-weight: 500; }
-        .meaning { font-size: 0.95rem; color: var(--text-sub); line-height: 1.7; margin-bottom: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; }
-
-        .prompt-label { font-size: 0.7rem; color: var(--accent-color); margin-bottom: 8px; font-weight: bold; }
-        .prompt-box {
-            background: #0f172a; padding: 18px; border-radius: 12px;
-            font-family: 'Courier New', monospace; font-size: 0.9rem; color: #cbd5e1;
-            margin-bottom: 25px; line-height: 1.4; border: 1px solid #334155; word-break: break-all;
-        }
-
-        .copy-btn {
-            background: var(--accent-color); color: #000;
-            border: none; padding: 16px; width: 100%; border-radius: 12px;
-            font-weight: 800; cursor: pointer; letter-spacing: 1px;
-        }
-
-        #toast {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-color); color: #000;
-            padding: 10px 25px; border-radius: 30px; font-size: 0.85rem;
-            display: none; z-index: 2000; font-weight: bold;
-        }
+        .word-title { font-size: 2.2rem; color: var(--accent-color); text-align: center; margin-top: 30px; }
+        .copy-btn { background: var(--accent-color); color: #000; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-<header>
-    <h1>AI CINEMATOGRAPHY</h1>
-</header>
-
-<div class="app-container" id="app-view"></div>
-
-<div class="modal" id="detail-modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">✕</span>
-        <div class="fav-action-group" id="fav-group" onclick="toggleFavorite()">
-            <span class="fav-action-text">已收藏</span>
-            <span class="modal-heart" id="modal-heart">❤</span>
+    <header><h1>AI CINEMATOGRAPHY (VER 102)</h1></header>
+    <div class="app-container" id="app-view"></div>
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">✕ 返回</span>
+            <span class="modal-heart" id="modal-heart" onclick="toggleFavorite()">❤</span>
+            <div id="modal-body"></div>
         </div>
-        <div id="modal-body"></div>
     </div>
-</div>
+    <script>
+        // 【核心修正：直接清空所有可能出錯的儲存】
+        localStorage.clear(); 
+        
+        const vocabularyData = [
+            { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Up", "chinese_translation": "仰移鏡頭", "meaning": "攝影機垂直向上旋轉。", "example": "Tilt up, hero shot." },
+            { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Down", "chinese_translation": "俯移鏡頭", "meaning": "攝影機垂直向下旋轉。", "example": "Tilt down, reveal feet." },
+            { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Truck Left", "chinese_translation": "左側移", "meaning": "向左橫向移動。", "example": "Lateral truck left." },
+            { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Truck Right", "chinese_translation": "右側移", "meaning": "向右橫向移動。", "example": "Lateral truck right." },
+            { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Whip Pan", "chinese_translation": "急速橫搖", "meaning": "極速旋轉產生模糊。", "example": "Whip pan transition." },
+            { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Pedestal Down", "chinese_translation": "升降下降", "meaning": "機身垂直下移。", "example": "Pedestal down." },
+            { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Pedestal Up", "chinese_translation": "升降上升", "meaning": "機身垂直上移。", "example": "Pedestal up." },
+            { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Crane Up", "chinese_translation": "搖臂上升", "meaning": "模擬搖臂擴大視野。", "example": "Crane up, epic scale." },
+            { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Crane Down", "chinese_translation": "搖臂下降", "meaning": "從高處降落。", "example": "Crane down landing." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Slow Dolly In", "chinese_translation": "慢速前推", "meaning": "緩慢移向主體。", "example": "Slow dolly in." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Slow Dolly Out", "chinese_translation": "慢速後退", "meaning": "緩慢遠離主體。", "example": "Slow dolly out." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Fast Dolly In", "chinese_translation": "急速前進", "meaning": "快速推進創造急迫感。", "example": "Fast dolly in rush." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Smooth Zoom In", "chinese_translation": "平滑縮放", "meaning": "僅改變焦距放大。", "example": "Optical zoom in." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Smooth Zoom Out", "chinese_translation": "平滑縮小", "meaning": "焦距縮小展現環境。", "example": "Optical zoom out." },
+            { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Snap Zoom", "chinese_translation": "快閃變焦", "meaning": "極速縮放模擬震驚。", "example": "Snap zoom impact." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Leading Shot", "chinese_translation": "領航追蹤", "meaning": "攝影機隨主體後退。", "example": "Leading shot tracking." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Following Shot", "chinese_translation": "跟隨追蹤", "meaning": "跟在主體後方。", "example": "Following shot." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Side Tracking", "chinese_translation": "側向平行追蹤", "meaning": "側面平行移動。", "example": "Side tracking parallel." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "POV Walk", "chinese_translation": "第一人稱步行", "meaning": "模擬人眼視角晃動。", "example": "POV walk entry." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Over-the-Shoulder", "chinese_translation": "過肩鏡頭", "meaning": "肩膀後方拍攝對方。", "example": "OTS dialogue." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Fisheye Lens", "chinese_translation": "魚眼鏡頭", "meaning": "廣角畸變窺視感。", "example": "Fisheye distortion." },
+            { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Handheld", "chinese_translation": "手持鏡頭", "meaning": "自然晃動真實感。", "example": "Handheld realism." },
+            { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Orbit 180", "chinese_translation": "180度環繞", "meaning": "繞主體旋轉半圈。", "example": "Orbit 180 epic." },
+            { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Fast 360 Spin", "chinese_translation": "360度旋轉", "meaning": "快速旋轉一整圈。", "example": "Fast 360 orbit spin." },
+            { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Cinematic Arc", "chinese_translation": "電影弧形運鏡", "meaning": "緩慢弧形揭露側面。", "example": "Slow cinematic arc." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Dolly Zoom", "chinese_translation": "滑動變焦", "meaning": "背景扭曲主體固定。", "example": "Dolly zoom vertigo." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Macro Zoom", "chinese_translation": "微距縮放", "meaning": "進入微觀景觀。", "example": "Extreme macro zoom." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Hyper-Zoom", "chinese_translation": "超級變焦", "meaning": "極遠拉近至地面。", "example": "Cosmic hyper-zoom." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Focus Pull", "chinese_translation": "由模糊到清晰", "meaning": "對焦至主體。", "example": "Reveal from blur." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Rack Focus", "chinese_translation": "焦點變換", "meaning": "前後景焦點切換。", "example": "Rack focus flower to person." },
+            { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Dutch Angle", "chinese_translation": "荷蘭式傾斜", "meaning": "傾斜拍攝營造不安。", "example": "Dutch angle tension." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Reveal Behind", "chinese_translation": "遮擋後揭示", "meaning": "從障礙物後滑出。", "example": "Reveal from pillar." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Fly-Through", "chinese_translation": "穿梭鏡頭", "meaning": "穿過物理障礙。", "example": "Fly-through window." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Drone Flyover", "chinese_translation": "高空掠過", "meaning": "強調環境宏大。", "example": "Drone flyover sea." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Drone Reveal", "chinese_translation": "無人機揭示", "meaning": "上升仰移創造探索感。", "example": "Epic drone reveal." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Drone Orbit", "chinese_translation": "大尺度環繞", "meaning": "廣闊空間大旋轉。", "example": "Large-scale drone orbit." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Top-Down", "chinese_translation": "上帝視角", "meaning": "垂直向下幾何美感。", "example": "Top-down drone shot." },
+            { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Drone Dive", "chinese_translation": "穿越機俯衝", "meaning": "極速俯衝動能。", "example": "FPV drone dive." }
+        ];
 
-<div id="toast">PROMPT COPIED</div>
+        let favorites = [];
+        let activeItem = null;
+        const appView = document.getElementById('app-view');
+        const modal = document.getElementById('detail-modal');
 
-<script>
-    // 38 種運鏡資料
-    const vocabularyData = [
-        { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Up", "chinese_translation": "仰移鏡頭", "meaning": "攝影機在固定位置垂直向上旋轉，展現主體的高大或威嚴登場。", "example": "Tilt up, starting from feet up to the face, hero shot, low angle, majestic." },
-        { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Down", "chinese_translation": "俯移鏡頭", "meaning": "攝影機垂直向下旋轉，常用於介紹角色細節或引導視線看向地面。", "example": "Tilt down, camera moves from face down to feet, detailed reveal, steady motion." },
-        { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Truck Left (Lateral)", "chinese_translation": "向左側移鏡頭", "meaning": "攝影機平行於主體向左橫向移動，增加畫面的層次感與視覺動能。", "example": "Lateral truck left, camera slides parallel to the subject, cinematic parallax effect." },
-        { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Truck Right (Lateral)", "chinese_translation": "向右側移鏡頭", "meaning": "攝影機平行於主體向右橫向移動，跟隨主體移動或觀察環境規模。", "example": "Lateral truck right, camera moves sideways along the street, dynamic background shift." },
-        { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Whip Pan", "chinese_translation": "急速橫搖鏡頭", "meaning": "攝影機極速旋轉產生動態模糊，隨後定格在新的目標，用於銜接空間。", "example": "Whip pan, fast lateral sweep, extreme motion blur, transitioning to new scene." },
-        { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Pedestal Down", "chinese_translation": "升降下降 (垂直降下)", "meaning": "整個攝影機機身垂直向下移動（不旋轉），用於降低視點。", "example": "Pedestal down, camera body moves vertically downward, maintaining eye-level contact." },
-        { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Pedestal Up", "chinese_translation": "升降上升 (垂直升起)", "meaning": "整個攝影機機身垂直向上平移，常用於從腰部水平升至視線水平。", "example": "Pedestal up, vertical camera rise, from waist to eye level, steady motion." },
-        { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Crane Up (High Angle Reveal)", "chinese_translation": "搖臂上升 (高角度揭示)", "meaning": "模擬搖臂運鏡，攝影機向上並向後移動，擴大視野並展現環境全貌。", "example": "Crane up, rising camera angle, high angle reveal of the city landscape, epic scale." },
-        { "category": "基礎垂直與升降 (Basic Vertical & Crane)", "word": "Crane Down (Landing)", "chinese_translation": "搖臂下降 (落地鏡頭)", "meaning": "攝影機從高處緩慢降落到主體水平，創造進入場景或落地的視覺感。", "example": "Crane down, landing camera movement, descending from sky to street level." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Slow Dolly In", "chinese_translation": "慢速前推鏡頭", "meaning": "攝影機緩慢移向主體，建立親密感或強化情緒轉折。", "example": "Slow dolly in, camera gently pushes toward the character's face, cinematic lighting, 4k." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Slow Dolly Out", "chinese_translation": "慢速後退鏡頭", "meaning": "攝影機緩慢遠離主體，展現主體與環境關係，強調孤獨或空間感。", "example": "Slow dolly out, the subject recedes into the vast environment, high contrast, atmospheric." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Fast Dolly In (Rush)", "chinese_translation": "急速前進 (衝刺鏡頭)", "meaning": "攝影機快速向主體推進，創造急迫感、震驚或突然的覺醒。", "example": "Fast dolly in, rapid push toward the subject, motion blur on edges, intense." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Smooth Optical Zoom In", "chinese_translation": "平滑光學變焦前進", "meaning": "僅改變鏡頭焦距來放大主體，本體不動，創造靜態視覺縮放感。", "example": "Smooth optical zoom in, narrowing the field of view on the subject, no camera movement." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Smooth Optical Zoom Out", "chinese_translation": "平滑光學變焦後退", "meaning": "焦距縮小使畫面變寬，展現主體周遭的環境細節。", "example": "Smooth optical zoom out, widening the shot, revealing the surrounding context." },
-        { "category": "推拉與變焦控制 (Dolly & Zoom Control)", "word": "Snap Zoom (Crash Zoom)", "chinese_translation": "快閃變焦 (急速縮放)", "meaning": "極其快速的變焦，模擬驚訝、震驚或強迫鎖定特定細節。", "example": "Snap zoom, instant crash zoom on the subject's expression, high impact." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Leading Shot", "chinese_translation": "領航追蹤鏡頭", "meaning": "主體向前走，攝影機以同速後退，保持面對面距離，展現堅定感。", "example": "Leading shot, backward tracking, camera retreats as subject walks forward." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Following Shot", "chinese_translation": "跟隨追蹤鏡頭", "meaning": "攝影機跟在主體後方，帶領觀眾進入場景，強調旅程與探索。", "example": "Following shot, forward tracking, camera follows behind the subject as they walk." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Side Tracking (Parallel)", "chinese_translation": "側向平行追蹤", "meaning": "攝影機與主體保持平行橫移，捕捉側面動作與流動環境背景。", "example": "Side tracking, parallel movement, tracking subject's profile, rhythmic motion." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "POV Walk", "chinese_translation": "第一人稱步行", "meaning": "模擬人眼視角，帶有規律輕微晃動，沉浸在角色的感官體驗中。", "example": "POV walk, first-person perspective, slight bobbing and swaying, entering the room." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Over-the-Shoulder (OTS)", "chinese_translation": "過肩鏡頭", "meaning": "從角色肩膀後方拍攝另一角色，建立對話空間感與視角對稱。", "example": "Over-the-shoulder shot, looking past one character to the other's reaction." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Fisheye / Peephole Lens", "chinese_translation": "魚眼 / 門孔鏡頭", "meaning": "極寬角度產生畸變，營造被監視、不安或超現實的窺視感。", "example": "Fisheye lens distortion, peephole perspective, curved edges, surveillance style." },
-        { "category": "主體追蹤與視角 (Subject Tracking & POV)", "word": "Handheld (Documentary Style)", "chinese_translation": "手持鏡頭 (紀錄片風格)", "meaning": "帶有微小不穩定晃動，營造真實、臨場與親密的觀察者視角。", "example": "Handheld camera style, organic motion, documentary realism, high immersion." },
-        { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Orbit 180 (Half Circle)", "chinese_translation": "180度環繞鏡頭", "meaning": "攝影機繞主體旋轉半圈，展示空間深度與角色的多維度樣貌。", "example": "Orbit 180, half-circle camera rotation around the subject, cinematic feel." },
-        { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Fast 360 Orbit (Spin)", "chinese_translation": "360度快速旋轉鏡頭", "meaning": "攝影機快速旋轉一整圈，創造旋轉、迷幻或強大戲劇效果。", "example": "Fast 360 orbit, spinning camera move around the subject, cinematic energy." },
-        { "category": "環繞與弧形運鏡 (Orbital & Arc)", "word": "Slow Cinematic Arc", "chinese_translation": "慢速電影弧形運鏡", "meaning": "攝影機沿寬廣弧形路徑慢移，漸漸揭露側面輪廓，優雅穩定。", "example": "Slow cinematic arc, gentle curved movement, revealing side profile, soft lighting." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Dolly Zoom (Vertigo Effect)", "chinese_translation": "希區考克變焦", "meaning": "結合相機移動與焦距縮放，背景扭曲但主體固定，營造心理不安。", "example": "Dolly zoom, Vertigo effect, background distorts while subject stays fixed." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Extreme Macro Zoom", "chinese_translation": "極限微距縮放", "meaning": "從微距開始不斷深入，將臉部或物體轉化為抽象微觀景觀。", "example": "Extreme macro zoom, camera penetrates into the iris, revealing cosmic details." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Cosmic Hyper-Zoom", "chinese_translation": "宇宙級超級變焦", "meaning": "無縫長鏡頭從極遠處瞬間拉近至地面具體主體，展現宏大尺度。", "example": "Cosmic hyper-zoom, from satellite view down to a person, seamless transition." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Reveal From Blur (Focus Pull)", "chinese_translation": "由模糊到清晰", "meaning": "起始完全模糊，隨後對焦主體，用於引入角色或表達意識恢復。", "example": "Reveal from blur, focus pull until the subject is sharp, soft bokeh background." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Rack Focus", "chinese_translation": "焦點變換鏡頭", "meaning": "焦點在前景背景間切換，引導觀眾視線而不移動相機。", "example": "Rack focus, shifting from foreground flower to person in background." },
-        { "category": "焦點深度與特效 (Lens Depth & VFX)", "word": "Dutch Angle (Camera Roll)", "chinese_translation": "荷蘭式傾斜", "meaning": "攝影機傾斜拍攝，使畫面失衡，視覺化放大角色不安或緊張氣氛。", "example": "Dutch angle, tilted perspective, camera roll, psychological tension." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Reveal From Behind (Wipe)", "chinese_translation": "遮擋後揭示", "meaning": "從障礙物後方滑出，揭露隱藏主體，營造驚喜或發現感。", "example": "Reveal from behind a pillar, lateral slide, discovering the subject in shadows." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Fly-Through Shot", "chinese_translation": "穿梭鏡頭", "meaning": "攝影機穿過物理障礙 (如窗戶)，帶領觀眾進入另一個空間。", "example": "Fly-through shot, camera passes through a window pane into a room, dynamic flow." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Drone Flyover", "chinese_translation": "無人機高空掠過", "meaning": "高空快速飛過主體上方，強調主體渺小與環境宏大。", "example": "Drone flyover, high altitude aerial shot, moving fast over mountains and sea." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Epic Drone Reveal", "chinese_translation": "壯觀無人機揭示", "meaning": "結合上升與仰移，控制看到的時機，創造強大探索感。", "example": "Epic drone reveal, pedestal and tilt up simultaneously, breathtaking landscape." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Large-Scale Drone Orbit", "chinese_translation": "大尺度空拍環繞", "meaning": "在廣闊空間繞主體旋轉，展現主體在環境中的主導或孤立位。", "example": "Large-scale drone orbit, massive aerial circle around the castle, epic scale." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "Top-Down (God's Eye View)", "chinese_translation": "俯視鏡頭 (上帝視角)", "meaning": "垂直向下將場景簡化為幾何圖形，傳達孤立或宏觀象徵意義。", "example": "Top-down drone shot, pointing straight down, symmetrical composition." },
-        { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "FPV Drone Dive", "chinese_translation": "FPV 穿越機俯衝", "meaning": "模擬極速俯衝動作，創造身臨其境動能，適合追逐或動作場面。", "example": "FPV drone dive, aggressive plunging angle, weaving through buildings." }
-    ];
-
-    // 請將名稱改為這個全新的（以前從沒用過的）
-    const APP_STORAGE_KEY = 'CAM_FINAL_DATA_CLEAN_V1';
-    let favorites = JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || [];
-    let activeItem = null;
-    let currentCategory = null;
-
-    const appView = document.getElementById('app-view');
-    const modal = document.getElementById('detail-modal');
-
-    function renderHome() {
-        currentCategory = null;
-        appView.innerHTML = `
-            <div class="fav-header-link" onclick="renderFavorites()">
-                <span>❤ 我的常用項目</span>
-                <span style="font-size:0.7rem; color:var(--text-sub)">進入查看 ➔</span>
-            </div>
-            <div class="section-title">運鏡分類 CATEGORIES</div>
-        `;
-        const categories = [...new Set(vocabularyData.map(item => item.category))];
-        categories.forEach(cat => {
-            const card = document.createElement('div');
-            card.className = 'category-card';
-            card.innerHTML = `<h3>${cat}</h3><span class="arrow">›</span>`;
-            card.onclick = () => renderItemList(cat);
-            appView.appendChild(card);
-        });
-    }
-
-    function renderItemList(category) {
-        currentCategory = category;
-        appView.innerHTML = `<div style="margin-bottom:25px; color:var(--text-sub); font-size:0.9rem; cursor:pointer" onclick="renderHome()">⇠ 返回類別</div>`;
-        appView.innerHTML += `<div class="section-title">${category}</div>`;
-        const items = vocabularyData.filter(i => i.category === category);
-        items.forEach(item => {
-            const isFav = favorites.includes(item.word);
-            const row = document.createElement('div');
-            row.className = 'item-row';
-            row.innerHTML = `
-                <span class="word-name">${item.word}</span>
-                <span class="${isFav ? 'fav-status' : 'neutral-status'}">${isFav ? '❤️ 已收藏' : '›'}</span>
-            `;
-            row.onclick = () => openModal(item);
-            appView.appendChild(row);
-        });
-    }
-
-    function renderFavorites() {
-        currentCategory = "FAVORITES";
-        appView.innerHTML = `<div style="margin-bottom:25px; color:var(--text-sub); font-size:0.9rem; cursor:pointer" onclick="renderHome()">⇠ 返回首頁</div>`;
-        appView.innerHTML += `<div class="section-title">我的常用項目 FAVORITES</div>`;
-        if (favorites.length === 0) {
-            appView.innerHTML += `<p style="color:var(--text-sub); text-align:center; margin-top:50px;">目前尚無收藏項目</p>`;
-            return;
+        function renderHome() {
+            appView.innerHTML = `<div class="fav-header-link" onclick="renderFavorites()"><span>❤ 我的常用項目</span><span>➔</span></div>`;
+            const categories = [...new Set(vocabularyData.map(item => item.category))];
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `<h3>${cat}</h3><span>›</span>`;
+                card.onclick = () => renderItemList(cat);
+                appView.appendChild(card);
+            });
         }
-        favorites.forEach(wordStr => {
-            const item = vocabularyData.find(i => i.word === wordStr);
-            if (item) {
+
+        function renderItemList(category) {
+            appView.innerHTML = `<div style="margin-bottom:20px; color:var(--accent-color); cursor:pointer" onclick="renderHome()">⇠ 返回</div>`;
+            vocabularyData.filter(i => i.category === category).forEach(item => {
+                const isFav = favorites.includes(item.word);
                 const row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = `<span class="word-name">${item.word}</span><div class="fav-status">❤️ 已收藏</div>`;
+                row.innerHTML = `<span>${item.word}</span><span style="color:var(--fav-color)">${isFav ? '❤️' : '›'}</span>`;
                 row.onclick = () => openModal(item);
                 appView.appendChild(row);
-            }
-        });
-    }
-
-    function openModal(item) {
-        activeItem = item;
-        const modalBody = document.getElementById('modal-body');
-        const heart = document.getElementById('modal-heart');
-        const favGroup = document.getElementById('fav-group');
-        
-        const isFav = favorites.includes(item.word);
-        heart.className = isFav ? 'modal-heart active' : 'modal-heart';
-        favGroup.className = isFav ? 'fav-action-group active' : 'fav-action-group';
-
-        modalBody.innerHTML = `
-            <h2 class="word-title">${item.word}</h2>
-            <div class="translation">${item.chinese_translation}</div>
-            <div class="meaning">${item.meaning}</div>
-            <div class="prompt-label">AI PROMPT</div>
-            <div class="prompt-box" id="prompt-text">${item.example}</div>
-            <button class="copy-btn" onclick="copyPrompt()">COPY PROMPT</button>
-        `;
-        modal.style.display = 'block';
-    }
-
-    function closeModal() {
-        modal.style.display = 'none';
-        if (currentCategory === "FAVORITES") renderFavorites();
-        else if (currentCategory) renderItemList(currentCategory);
-    }
-
-    function toggleFavorite() {
-        if (!activeItem) return;
-        const index = favorites.indexOf(activeItem.word);
-        const heart = document.getElementById('modal-heart');
-        const favGroup = document.getElementById('fav-group');
-
-        if (index > -1) {
-            favorites.splice(index, 1);
-            heart.classList.remove('active');
-            favGroup.classList.remove('active');
-            showToast("已從收藏夾移除");
-        } else {
-            favorites.push(activeItem.word);
-            heart.classList.add('active');
-            favGroup.classList.add('active');
-            showToast("已加入收藏夾");
+            });
         }
-        localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(favorites));
-    }
 
-    function copyPrompt() {
-        const text = document.getElementById('prompt-text').innerText;
-        navigator.clipboard.writeText(text).then(() => showToast("PROMPT COPIED"));
-    }
+        function renderFavorites() {
+            appView.innerHTML = `<div style="margin-bottom:20px; color:var(--accent-color); cursor:pointer" onclick="renderHome()">⇠ 返回</div>`;
+            if (favorites.length === 0) { appView.innerHTML += `<p style="text-align:center; color:var(--text-sub)">尚無收藏</p>`; return; }
+            favorites.forEach(wordStr => {
+                const item = vocabularyData.find(i => i.word === wordStr);
+                if (item) {
+                    const row = document.createElement('div');
+                    row.className = 'item-row';
+                    row.innerHTML = `<span>${item.word}</span><span>❤️</span>`;
+                    row.onclick = () => openModal(item);
+                    appView.appendChild(row);
+                }
+            });
+        }
 
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.innerText = msg;
-        toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 1500);
-    }
+        function openModal(item) {
+            activeItem = item;
+            document.getElementById('modal-heart').className = favorites.includes(item.word) ? 'modal-heart active' : 'modal-heart';
+            document.getElementById('modal-body').innerHTML = `
+                <h2 class="word-title">${item.word}</h2>
+                <div style="text-align:center; margin-bottom:20px;">${item.chinese_translation}</div>
+                <div style="color:var(--text-sub); line-height:1.6; font-size:0.9rem;">${item.meaning}</div>
+                <div style="background:#000; padding:15px; border-radius:10px; margin-top:20px; font-family:monospace; font-size:0.85rem;" id="p-text">${item.example}</div>
+                <button class="copy-btn" onclick="copyP()">COPY PROMPT</button>
+            `;
+            modal.style.display = 'block';
+        }
 
-    window.onclick = (e) => { if (e.target == modal) closeModal(); }
-
-    // 註冊 Service Worker 並監聽更新
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            window.location.reload(); 
-        });
-    }
-
-    renderHome();
-</script>
+        function closeModal() { modal.style.display = 'none'; renderHome(); }
+        function toggleFavorite() {
+            const idx = favorites.indexOf(activeItem.word);
+            if (idx > -1) favorites.splice(idx, 1); else favorites.push(activeItem.word);
+            document.getElementById('modal-heart').classList.toggle('active');
+        }
+        function copyP() {
+            navigator.clipboard.writeText(document.getElementById('p-text').innerText);
+            alert("已複製");
+        }
+        renderHome();
+    </script>
 </body>
 </html>
