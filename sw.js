@@ -1,5 +1,6 @@
 // 1. 每次修改 index.html 後，請手動將這裡的 v1 改成 v2, v3... 以此類推
-const CACHE_NAME = 'camera-master-v1.1'; 
+// 將 v1 改成 v2 (或是您目前沒用過的數字)
+const CACHE_NAME = 'camera-master-v2.0';
 
 const ASSETS = [
   './',
