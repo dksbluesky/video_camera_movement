@@ -173,8 +173,8 @@
         { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "FPV Drone Dive", "chinese_translation": "FPV 穿越機俯衝", "meaning": "模擬極速俯衝動作，創造身臨其境動能，適合追逐或動作場面。", "example": "FPV drone dive, aggressive plunging angle, weaving through buildings." }
     ];
 
-    // 使用專屬 Key 避開舊 App 資料
-    'cam_master_FORCE_RESET_V1';
+    // 請將名稱改為這個全新的（以前從沒用過的）
+    const APP_STORAGE_KEY = 'CAM_FINAL_DATA_CLEAN_V1';
     let favorites = JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || [];
     let activeItem = null;
     let currentCategory = null;
