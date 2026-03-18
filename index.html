@@ -8,7 +8,7 @@
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
-            --accent-color: #38bdf8; /* 極光藍 */
+            --accent-color: #38bdf8;
             --text-main: #f1f5f9;
             --text-sub: #94a3b8;
             --fav-color: #f43f5e;
@@ -34,16 +34,16 @@
 
         .app-container { padding: 20px; max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
 
-        /* 頂部收藏夾快捷入口 */
+        /* 收藏夾入口 */
         .fav-header-link {
-            background: linear-gradient(90deg, #1e293b, #0f172a);
+            background: rgba(255,255,255,0.03);
             padding: 18px; border-radius: 15px; margin-bottom: 25px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--fav-color); cursor: pointer;
+            border: 1px solid rgba(244, 63, 94, 0.3); cursor: pointer;
         }
         .fav-header-link span { color: var(--fav-color); font-weight: bold; font-size: 0.95rem; }
 
-        .section-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 1px; }
+        .section-title { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; }
 
         .category-card {
             background: var(--card-bg);
@@ -61,7 +61,8 @@
             cursor: pointer; border: 1px solid rgba(255,255,255,0.02);
         }
         .item-row .word-name { font-weight: 600; font-size: 1rem; }
-        .item-row .fav-status { font-size: 1rem; }
+        .item-row .fav-status { font-size: 0.85rem; color: var(--fav-color); display: flex; align-items: center; gap: 5px; }
+        .item-row .neutral-status { font-size: 1.2rem; color: var(--text-sub); }
 
         /* 詳情 Modal */
         .modal {
@@ -77,10 +78,13 @@
         }
 
         .close-btn { position: absolute; top: 20px; left: 20px; font-size: 1.2rem; cursor: pointer; color: var(--text-sub); }
-        .modal-heart { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; cursor: pointer; color: var(--text-sub); }
+        .fav-action-group { position: absolute; top: 18px; right: 25px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .fav-action-text { font-size: 0.8rem; color: var(--fav-color); font-weight: bold; display: none; }
+        .modal-heart { font-size: 1.5rem; color: var(--text-sub); transition: 0.3s; }
         .modal-heart.active { color: var(--fav-color); }
+        .fav-action-group.active .fav-action-text { display: block; }
 
-        .word-title { font-size: 2.2rem; margin: 20px 0 10px 0; color: var(--accent-color); font-weight: 800; text-align: center; }
+        .word-title { font-size: 2.2rem; margin: 30px 0 10px 0; color: var(--accent-color); font-weight: 800; text-align: center; }
         .translation { font-size: 1.2rem; margin-bottom: 25px; color: var(--text-main); text-align: center; font-weight: 500; }
         .meaning { font-size: 0.95rem; color: var(--text-sub); line-height: 1.7; margin-bottom: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; }
 
@@ -111,13 +115,15 @@
     <h1>AI CINEMATOGRAPHY</h1>
 </header>
 
-<div class="app-container" id="app-view">
-    </div>
+<div class="app-container" id="app-view"></div>
 
 <div class="modal" id="detail-modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">✕</span>
-        <span class="modal-heart" id="modal-heart" onclick="toggleFavoriteFromModal()">❤</span>
+        <div class="fav-action-group" id="fav-group" onclick="toggleFavorite()">
+            <span class="fav-action-text">已收藏</span>
+            <span class="modal-heart" id="modal-heart">❤</span>
+        </div>
         <div id="modal-body"></div>
     </div>
 </div>
@@ -166,16 +172,19 @@
         { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "FPV Drone Dive", "chinese_translation": "FPV 穿越機俯衝", "meaning": "模擬極速俯衝動作，創造身臨其境動能，適合追逐或動作場面。", "example": "FPV drone dive, aggressive plunging angle, weaving through buildings." }
     ];
 
-    let favorites = JSON.parse(localStorage.getItem('camera_v2_favs')) || [];
+    let favorites = JSON.parse(localStorage.getItem('cam_pro_favs')) || [];
     let activeItem = null;
+    let currentCategory = null;
+
     const appView = document.getElementById('app-view');
     const modal = document.getElementById('detail-modal');
 
     function renderHome() {
+        currentCategory = null;
         appView.innerHTML = `
             <div class="fav-header-link" onclick="renderFavorites()">
                 <span>❤ 我的常用項目</span>
-                <span style="font-size:0.7rem">進入收藏夾 ➔</span>
+                <span style="font-size:0.7rem; color:var(--text-sub)">進入查看 ➔</span>
             </div>
             <div class="section-title">運鏡分類 CATEGORIES</div>
         `;
@@ -190,22 +199,27 @@
     }
 
     function renderItemList(category) {
-        appView.innerHTML = `<div style="margin-bottom:25px; color:var(--text-sub); font-size:0.9rem; cursor:pointer" onclick="renderHome()">⇠ 返回選單</div>`;
+        currentCategory = category;
+        appView.innerHTML = `<div style="margin-bottom:25px; color:var(--text-sub); font-size:0.9rem; cursor:pointer" onclick="renderHome()">⇠ 返回類別</div>`;
         appView.innerHTML += `<div class="section-title">${category}</div>`;
         const items = vocabularyData.filter(i => i.category === category);
         items.forEach(item => {
             const isFav = favorites.includes(item.word);
             const row = document.createElement('div');
             row.className = 'item-row';
-            row.innerHTML = `<span class="word-name">${item.word}</span><span class="fav-status">${isFav ? '❤️' : '›'}</span>`;
+            row.innerHTML = `
+                <span class="word-name">${item.word}</span>
+                <span id="row-status-${item.word.replace(/\s+/g, '')}">${isFav ? '<div class="fav-status">❤️ 已收藏</div>' : '<div class="neutral-status">›</div>'}</span>
+            `;
             row.onclick = () => openModal(item);
             appView.appendChild(row);
         });
     }
 
     function renderFavorites() {
+        currentCategory = "FAVORITES";
         appView.innerHTML = `<div style="margin-bottom:25px; color:var(--text-sub); font-size:0.9rem; cursor:pointer" onclick="renderHome()">⇠ 返回首頁</div>`;
-        appView.innerHTML += `<div class="section-title">常用項目 FAVORITES</div>`;
+        appView.innerHTML += `<div class="section-title">我的常用項目 FAVORITES</div>`;
         if (favorites.length === 0) {
             appView.innerHTML += `<p style="color:var(--text-sub); text-align:center; margin-top:50px;">目前尚無收藏項目</p>`;
             return;
@@ -215,7 +229,7 @@
             if (item) {
                 const row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = `<span class="word-name">${item.word}</span><span class="fav-status">❤️</span>`;
+                row.innerHTML = `<span class="word-name">${item.word}</span><div class="fav-status">❤️ 已收藏</div>`;
                 row.onclick = () => openModal(item);
                 appView.appendChild(row);
             }
@@ -226,7 +240,12 @@
         activeItem = item;
         const modalBody = document.getElementById('modal-body');
         const heart = document.getElementById('modal-heart');
-        heart.className = favorites.includes(item.word) ? 'modal-heart active' : 'modal-heart';
+        const favGroup = document.getElementById('fav-group');
+        
+        const isFav = favorites.includes(item.word);
+        heart.className = isFav ? 'modal-heart active' : 'modal-heart';
+        favGroup.className = isFav ? 'fav-action-group active' : 'fav-action-group';
+
         modalBody.innerHTML = `
             <h2 class="word-title">${item.word}</h2>
             <div class="translation">${item.chinese_translation}</div>
@@ -238,29 +257,46 @@
         modal.style.display = 'block';
     }
 
-    function closeModal() { modal.style.display = 'none'; }
+    function closeModal() {
+        modal.style.display = 'none';
+        // 關閉 Modal 後，根據當前畫面刷新內容（特別是收藏夾）
+        if (currentCategory === "FAVORITES") renderFavorites();
+        else if (currentCategory) renderItemList(currentCategory);
+    }
+
+    function toggleFavorite() {
+        if (!activeItem) return;
+        const index = favorites.indexOf(activeItem.word);
+        const heart = document.getElementById('modal-heart');
+        const favGroup = document.getElementById('fav-group');
+        const toast = document.getElementById('toast');
+
+        if (index > -1) {
+            // 取消收藏
+            favorites.splice(index, 1);
+            heart.classList.remove('active');
+            favGroup.classList.remove('active');
+            showToast("已移除收藏");
+        } else {
+            // 加入收藏
+            favorites.push(activeItem.word);
+            heart.classList.add('active');
+            favGroup.classList.add('active');
+            showToast("已加入收藏夾");
+        }
+        localStorage.setItem('cam_pro_favs', JSON.stringify(favorites));
+    }
 
     function copyPrompt() {
         const text = document.getElementById('prompt-text').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 1500);
-        });
+        navigator.clipboard.writeText(text).then(() => showToast("PROMPT COPIED"));
     }
 
-    function toggleFavoriteFromModal() {
-        if (!activeItem) return;
-        const index = favorites.indexOf(activeItem.word);
-        if (index > -1) favorites.splice(index, 1);
-        else favorites.push(activeItem.word);
-        localStorage.setItem('camera_v2_favs', JSON.stringify(favorites));
-        document.getElementById('modal-heart').className = favorites.includes(activeItem.word) ? 'modal-heart active' : 'modal-heart';
-        
-        // 即時反映列表狀態
-        const currentCategory = vocabularyData.find(i => i.word === activeItem.word).category;
-        const isFavView = document.querySelector('.section-title').innerText.includes('FAVORITES');
-        if (isFavView) renderFavorites();
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 1500);
     }
 
     window.onclick = (e) => { if (e.target == modal) closeModal(); }
