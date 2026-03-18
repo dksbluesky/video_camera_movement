@@ -61,7 +61,7 @@
             cursor: pointer; border: 1px solid rgba(255,255,255,0.02);
         }
         .item-row .word-name { font-weight: 600; font-size: 1rem; }
-        .item-row .fav-status { font-size: 0.85rem; color: var(--fav-color); display: flex; align-items: center; gap: 5px; }
+        .item-row .fav-status { font-size: 0.85rem; color: var(--fav-color); display: flex; align-items: center; gap: 5px; font-weight: bold; }
         .item-row .neutral-status { font-size: 1.2rem; color: var(--text-sub); }
 
         /* 詳情 Modal */
@@ -131,6 +131,7 @@
 <div id="toast">PROMPT COPIED</div>
 
 <script>
+    // 38 種運鏡資料
     const vocabularyData = [
         { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Up", "chinese_translation": "仰移鏡頭", "meaning": "攝影機在固定位置垂直向上旋轉，展現主體的高大或威嚴登場。", "example": "Tilt up, starting from feet up to the face, hero shot, low angle, majestic." },
         { "category": "基礎旋轉與平移 (Basic Rotation & Lateral)", "word": "Tilt Down", "chinese_translation": "俯移鏡頭", "meaning": "攝影機垂直向下旋轉，常用於介紹角色細節或引導視線看向地面。", "example": "Tilt down, camera moves from face down to feet, detailed reveal, steady motion." },
@@ -172,10 +173,9 @@
         { "category": "環境揭示與穿梭 (Reveal & Fly-Through)", "word": "FPV Drone Dive", "chinese_translation": "FPV 穿越機俯衝", "meaning": "模擬極速俯衝動作，創造身臨其境動能，適合追逐或動作場面。", "example": "FPV drone dive, aggressive plunging angle, weaving through buildings." }
     ];
 
-    // 將原本的 cam_pro_favs 改成 cam_final_v3 (或其他新名稱)
-    let favorites = JSON.parse(localStorage.getItem('cam_final_v3')) || [];
-    // 下方的儲存動作也要同步修改
-    localStorage.setItem('cam_final_v3', JSON.stringify(favorites));
+    // 使用專屬 Key 避開舊 App 資料
+    const APP_STORAGE_KEY = 'cam_master_v38_final';
+    let favorites = JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || [];
     let activeItem = null;
     let currentCategory = null;
 
@@ -212,7 +212,7 @@
             row.className = 'item-row';
             row.innerHTML = `
                 <span class="word-name">${item.word}</span>
-                <span id="row-status-${item.word.replace(/\s+/g, '')}">${isFav ? '<div class="fav-status">❤️ 已收藏</div>' : '<div class="neutral-status">›</div>'}</span>
+                <span class="${isFav ? 'fav-status' : 'neutral-status'}">${isFav ? '❤️ 已收藏' : '›'}</span>
             `;
             row.onclick = () => openModal(item);
             appView.appendChild(row);
@@ -262,7 +262,6 @@
 
     function closeModal() {
         modal.style.display = 'none';
-        // 關閉 Modal 後，根據當前畫面刷新內容（特別是收藏夾）
         if (currentCategory === "FAVORITES") renderFavorites();
         else if (currentCategory) renderItemList(currentCategory);
     }
@@ -272,22 +271,19 @@
         const index = favorites.indexOf(activeItem.word);
         const heart = document.getElementById('modal-heart');
         const favGroup = document.getElementById('fav-group');
-        const toast = document.getElementById('toast');
 
         if (index > -1) {
-            // 取消收藏
             favorites.splice(index, 1);
             heart.classList.remove('active');
             favGroup.classList.remove('active');
-            showToast("已移除收藏");
+            showToast("已從收藏夾移除");
         } else {
-            // 加入收藏
             favorites.push(activeItem.word);
             heart.classList.add('active');
             favGroup.classList.add('active');
             showToast("已加入收藏夾");
         }
-        localStorage.setItem('cam_pro_favs', JSON.stringify(favorites));
+        localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(favorites));
     }
 
     function copyPrompt() {
@@ -303,6 +299,15 @@
     }
 
     window.onclick = (e) => { if (e.target == modal) closeModal(); }
+
+    // 註冊 Service Worker 並監聽更新
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload(); 
+        });
+    }
+
     renderHome();
 </script>
 </body>
